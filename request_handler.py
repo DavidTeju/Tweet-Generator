@@ -1,7 +1,6 @@
 url = "https://api.twitter.com/2/tweets/search/recent"
 
-bearer_token = "AAAAAAAAAAAAAAAAAAAAAC9ohQEAAAAAcX%2BIm9h9OXWH3nHfX%2BwWiPKMv2c" \
-               "%3DwFfalK5dSzuG8smjQ2bHbYZuqXjpDljs7oHIXjc6ljy0ORipGw "
+bearer_token = "replace"
 # TODO: take this out
 
 param = {'query': '',
