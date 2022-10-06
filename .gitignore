@@ -3,4 +3,6 @@ venv
 */.DS_Store
 .DS_Store
 __pycache__
-#backup
+backup
+backup/*
+# Just making sure
