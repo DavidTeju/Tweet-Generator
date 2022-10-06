@@ -1,7 +1,9 @@
 import os
+import random
 from collections import Counter
 from itertools import count
 from os import path
+from typing import Any
 
 import cloudpickle
 
@@ -16,7 +18,7 @@ class NgramModel:
                 self.pickle_path = self.pathify(self.gen_pickle_name())
         self.context_options: dict[tuple, set[str]] = dict()
         # dict [context, list of possible tokens]
-        self.ngram_count: Counter[tuple] = Counter()
+        self.ngram_count: Counter[tuple[tuple, str]] = Counter()
         # dict [tuple [context, token], count]
         self.num_tweets = 0
         self.num_sentences = 0
@@ -53,6 +55,44 @@ class NgramModel:
         file = open(self.pickle_path, "wb")
         cloudpickle.dump(self, file)
         file.close()
+
+    def generate_tweet(self):
+        context = "<start>", "<start>", "<start>"
+        text = ""
+        while True:
+            next_word = self.next_word(context)
+            context = (*context[1:], next_word)
+            if next_word == "<end>":
+                break
+            text += next_word + " "
+        return text
+
+    def next_word(self, context):
+        options = list(self.context_options[context])
+        weights = [self.get_word_prob(context, word) for word in options]
+        return random.choices(options, weights, k=1)[0]
+
+    context_freq_cache: dict[tuple, int] = dict()
+
+    # Very huge oversight on my part not adding a counter for contexts, so now I have to set up a cache to prevent
+    # having to recalculate the context frequency for the context of every word
+
+    def get_word_prob(self, context: tuple, token: str):
+        """Gets the probability of a word given a context
+        :param context: the n words preceding the token word
+        :param token: the word for which to find the probability
+        :return: a simple event probability of the word
+        """
+        context_freq = self.context_freq_cache.get((self, context)) or self.calculate_freq(context)
+        return self.ngram_count[(context, token)] / context_freq
+
+    def calculate_freq(self, context: tuple):
+        freq = 0
+        for token in self.context_options[context]:
+            freq += self.ngram_count[(context, token)]
+
+        self.context_freq_cache[self, context] = freq
+        return freq
 
     @staticmethod
     def load_existing_model(name: str):

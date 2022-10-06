@@ -1,30 +1,33 @@
-import requests
+import json
+import os
+
 from random_word import RandomWords
 
-import inspector
-from inspector import is_allowed
 from NgramModel import NgramModel
-from request_handler import *
+from inspector import tweet_to_sentences
+from twitter import *
 
 randomizer = RandomWords()
 
-
-def to_tweet_list(json_response: dict):
-    to_return: list[str] = []
-    if "includes" in json_response and "tweets" in json_response["includes"]:
-        tweet_list: list[dict[str, str]] = json_response["includes"]["tweets"]
-    elif "data" in json_response:
-        tweet_list: list[dict] = json_response["data"]
-    else:
-        return []
-    for tweet in tweet_list:
-        if tweet["lang"] == "en":
-            gen = list(is_allowed(tweet["text"].strip()))
-            if gen[0]:  # If allowed, get modified string and append
-                to_return.append(gen[1])
-    return to_return
-
-
 if __name__ == "__main__":
+    # print(json.dumps(dict(os.environ), indent=4))
     first_model = NgramModel.load_existing_model("main-model")
-    print(f"{first_model.num_tweets=}\n{first_model.num_sentences=}")
+    # test_mode = NgramModel(4, "Test")
+    #
+    # test_mode.train(["David has gone to the table where he is not welcome",
+    #                  "Sarah is at the party where she is not welcome because she wants to drink beer"])
+
+    bot = Twitter(os.environ["TWITTER_API_BEARER_TOKEN"],
+                  os.environ["TWITTER_API_KEY"],
+                  os.environ["TWITTER_API_KEY_SECRET"])
+
+    bot.post_tweet("testing environment variables")
+
+    # for i in range(5):
+    #     searcher.post_tweet(first_model.generate_tweet())
+
+    # for i in count():
+    # query = randomizer.get_random_word()
+    # for tweet in bot.get_tweets(query):
+    #     first_model.train(tweet_to_sentences(tweet))
+    # print(i)
