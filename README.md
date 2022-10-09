@@ -1,6 +1,6 @@
 # Tweet-Generator
 ###### Trained on 21,925 tweets
-TODO: add how to use
+<!-- TODO: add how to use -->
 ## Summary
 A machine learning python program using a custom/barebone ngram model trained on tweets to generate new human-alike tweets
 ## How does this work?
