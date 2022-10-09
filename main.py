@@ -1,6 +1,7 @@
 import time
 from itertools import count
 
+import schedule as schedule
 from random_word import RandomWords
 
 from NgramModel import NgramModel
@@ -14,16 +15,17 @@ bot = Twitter(os.environ["TWITTER_API_BEARER_TOKEN"],
               os.environ["TWITTER_API_KEY_SECRET"])
 first_model = NgramModel.load_existing_model("main-model")
 
-if __name__ == "__main__":
-    """
-    Will run training on model 100_000 times
-    """
-    tweet()
 
-    for i in count():
-        query = randomizer.get_random_word()
-        for tweet in bot.get_tweets(query):
-            first_model.train(tweet_to_sentences(tweet))
-        time.sleep(3)
-        if not (i % 80):
-            tweet()
+def train_model(model: NgramModel):
+    query = randomizer.get_random_word()
+    for each_tweet in bot.get_tweets(query):
+        model.train(tweet_to_sentences(each_tweet))
+
+
+if __name__ == "__main__":
+    schedule.every(3).seconds.do(lambda: train_model(first_model))
+    schedule.every(3).hours.do(lambda: tweet(first_model, bot))
+
+    while True:
+        schedule.run_pending()
+        time.sleep(1)
