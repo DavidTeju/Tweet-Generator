@@ -61,5 +61,6 @@ def run_server():
 
 if __name__ == "__main__":
     """This is simply a way for me to make this a background process so it isn't closed on the server"""
-    with DaemonContext():
-        run_server()
+    with open("log", "w+") as file:
+        with DaemonContext(stderr=file, stdout=file):
+            run_server()
