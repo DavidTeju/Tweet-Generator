@@ -13,8 +13,6 @@ driver_path = ChromeDriverManager().install()
 def get_pin(url):
     options = Options()
     options.headless = True
-    # options.binary_location = os.environ["GOOGLE_CHROME_BIN"]
-    # TODO: add this to ReadMe
     options.add_argument("--disable-dev-shm-usage")
     options.add_argument("--no-sandbox")
 

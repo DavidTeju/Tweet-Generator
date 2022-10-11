@@ -40,7 +40,7 @@ def exit_gracefully(*args):
 if __name__ == "__main__":
     # I scheduled the training sequence to run every 3 seconds and the tweet to run every 3 hours
     schedule.every(3).seconds.do(lambda: query_and_train(my_model, bot))
-    schedule.every(3).hours.do(lambda: generate_and_post_tweet(my_model, bot))
+    schedule.every(1).hours.do(lambda: generate_and_post_tweet(my_model, bot))
     schedule.every(10).minutes.do(my_model.backup)
 
     signal.signal(signal.SIGINT, exit_gracefully)

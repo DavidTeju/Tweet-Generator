@@ -57,7 +57,7 @@ The default main.py has three scheduled processes
 
 - The first process will load the existing model, query Twitter for new tweets, and train the model on queried tweets
   every 3 seconds
-- The second process will generate a random sentence and tweet it every 3 hours
+- The second process will generate a random sentence and tweet it every 1 hour
 - The third process will update the `.pickle` file every 10 minutes (although you can initialize a model to auto-update)
 
 To stop the processes safely, you may keyboard interrupt `^C` or kill the process `kill <pid>`  
