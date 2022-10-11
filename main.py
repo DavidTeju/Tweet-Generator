@@ -22,6 +22,15 @@ def train_model(model: NgramModel):
         model.train(tweet_to_sentences(each_tweet))
 
 
+def generate_and_post_tweet(model, api_client):
+    api_client.post_tweet(model.generate_tweet())
+
+
+def exit_gracefully(*args):
+    global exit_now
+    exit_now = True
+
+
 if __name__ == "__main__":
     schedule.every(3).seconds.do(lambda: train_model(first_model))
     schedule.every(3).hours.do(lambda: tweet(first_model, bot))
