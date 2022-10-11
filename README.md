@@ -24,7 +24,7 @@ tweets
     python3 -m venv venv
     source venv/bin/activate # for Linux/MacOs
    # just 'venv/bin/activate' for windows
-    pip install -r requirements.txt
+    pip3 install -r requirements.txt
     ```
 3. #### Set environment variables
     ```zsh
@@ -47,12 +47,18 @@ tweets
 ```zsh
 python main.py
 ```
+This will run the default server configuration as a background process. To run in foreground, open `python` and run
+```pycon
+import main
+main.run_server()
+```
 
-The default main.py has two scheduled processes
+The default main.py has three scheduled processes
 
 - The first process will load the existing model, query Twitter for new tweets, and train the model on queried tweets
   every 3 seconds
 - The second process will generate a random sentence and tweet it every 3 hours
+- The third process will update the `.pickle` file every 10 minutes (although you can initialize a model to auto-update)
 
 To stop the processes safely, you may keyboard interrupt `^C` or kill the process `kill <pid>`
 

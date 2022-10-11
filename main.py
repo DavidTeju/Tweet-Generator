@@ -1,5 +1,6 @@
 import signal
 import time
+from daemon import DaemonContext
 
 import schedule as schedule
 from random_word import RandomWords
@@ -37,10 +38,15 @@ def exit_gracefully(*args):
     exit_now = True
 
 
-if __name__ == "__main__":
+global exit_now
+
+
+def run_server():
+    global exit_now
     # I scheduled the training sequence to run every 3 seconds and the tweet to run every 3 hours
     schedule.every(3).seconds.do(lambda: query_and_train(my_model, bot))
     schedule.every(3).hours.do(lambda: generate_and_post_tweet(my_model, bot))
+    schedule.every(10).minutes.do(my_model.backup)
 
     signal.signal(signal.SIGINT, exit_gracefully)
     signal.signal(signal.SIGTERM, exit_gracefully)
@@ -49,6 +55,11 @@ if __name__ == "__main__":
     while not exit_now:
         schedule.run_pending()
         time.sleep(1)
-
     my_model.backup()
     print("Processes successfully stopped")
+
+
+if __name__ == "__main__":
+    """This is simply a way for me to make this a background process so it isn't closed on the server"""
+    with DaemonContext():
+        run_server()
