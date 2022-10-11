@@ -6,6 +6,7 @@ import requests
 from requests_oauthlib import OAuth1Session
 
 import browser
+import main
 from inspector import is_allowed
 
 
@@ -133,7 +134,9 @@ class Twitter:
         )
 
         if response.status_code != 201:
-            raise Exception(
-                "Request returned an error: {} {}".format(response.status_code, response.text)
+            print(
+                f"Request returned an error: {response.status_code} {response.text}.\tTrying again"
             )
-        print(f"successfully posted tweet: {tweet} to {os.environ['TWITTER_USERNAME']}")
+            main.generate_and_post_tweet(main.my_model, main.bot)  # Try again
+        else:
+            print(f"successfully posted tweet: {tweet} to {os.environ['TWITTER_USERNAME']}")
