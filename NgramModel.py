@@ -52,9 +52,8 @@ class NgramModel:
 
     def update_pickle_state(self):
         os.makedirs("models", exist_ok=True)
-        file = open(self.pickle_path, "wb")
-        cloudpickle.dump(self, file)
-        file.close()
+        with open(self.pickle_path, "wb") as file:
+            cloudpickle.dump(self, file)
 
     def generate_tweet(self):
         context = "<start>", "<start>", "<start>"
@@ -96,8 +95,8 @@ class NgramModel:
 
     @staticmethod
     def load_existing_model(name: str):
-        file = open(NgramModel.pathify(name), "rb")
-        obj: NgramModel = cloudpickle.load(file)
+        with open(NgramModel.pathify(name), "rb") as file:
+            obj: NgramModel = cloudpickle.load(file)
         return obj
 
     @staticmethod
