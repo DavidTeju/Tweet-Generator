@@ -3,18 +3,24 @@ import random
 from collections import Counter
 from itertools import count
 from os import path
-from typing import Any
 
 import cloudpickle
 
 
 class NgramModel:
 
-    def __init__(self, n: int, name=""):
+    def __init__(self, n: int, name="", auto_pickle=False):
+        """
+        Create a new model
+
+        :param n: n in n-gram, number of words in ngram
+        :param name: name of model. Will be used to name pickle file
+        :param auto_pickle: True if model should auto-backup after every call to self.train()
+        """
         self.n = n
         self.pickle_path = self.pathify(name or self.gen_pickle_name())
         if path.exists(self.pickle_path):  # Ask if they intend to overwrite existing pickle
-            if input(f"overwrite {self.pickle_path}? (Y/N)").upper() != "Y":
+            if input(f"overwrite {self.pickle_path}? (Y/N)\n").upper() != "Y":
                 self.pickle_path = self.pathify(self.gen_pickle_name())
         self.context_options: dict[tuple, set[str]] = dict()
         # dict [context, list of possible tokens]
@@ -22,6 +28,7 @@ class NgramModel:
         # dict [tuple [context, token], count]
         self.num_tweets = 0
         self.num_sentences = 0
+        self.auto_pickle = auto_pickle
 
     def train(self, tweet_as_list: list[str]):
         self.num_tweets += 1
@@ -32,7 +39,8 @@ class NgramModel:
             self.ngram_count.update(generated)
             for ngram in generated:
                 self.add_to_set(ngram)
-        self.update_pickle_state()
+        if self.auto_pickle:
+            self.backup()
 
     def generate_Ngrams(self, string: str):
         words = string.split(" ")
@@ -50,7 +58,7 @@ class NgramModel:
             self.context_options[ngram[0]] = set()
         self.context_options[ngram[0]].add(ngram[1])
 
-    def update_pickle_state(self):
+    def backup(self):
         os.makedirs("models", exist_ok=True)
         with open(self.pickle_path, "wb") as file:
             cloudpickle.dump(self, file)
@@ -78,6 +86,7 @@ class NgramModel:
 
     def get_word_prob(self, context: tuple, token: str):
         """Gets the probability of a word given a context
+
         :param context: the n words preceding the token word
         :param token: the word for which to find the probability
         :return: a simple event probability of the word
