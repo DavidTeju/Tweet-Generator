@@ -76,7 +76,7 @@ class Twitter:
         to_return = dict()
         try:
             to_return = requests.get(Twitter.__search_url, search_param, auth=self.bearer_oauth).json()
-        except:
+        except Exception:
             print("skipped error")
         return parse_response_to_list(to_return)
 
