@@ -60,7 +60,8 @@ The default main.py has three scheduled processes
 - The second process will generate a random sentence and tweet it every 3 hours
 - The third process will update the `.pickle` file every 10 minutes (although you can initialize a model to auto-update)
 
-To stop the processes safely, you may keyboard interrupt `^C` or kill the process `kill <pid>`
+To stop the processes safely, you may keyboard interrupt `^C` or kill the process `kill <pid>`  
+To find the `pid`, run `ps -xj | grep -v grep | grep "python main.py"` and it should be the number in the second column
 
 I encourage you to modify main.py in any way to change around the function using what's built in. I've extensively
 documented everything
