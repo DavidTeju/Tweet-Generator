@@ -1,12 +1,10 @@
 import os
-import sys
 from dataclasses import dataclass
 
 import requests
 from requests_oauthlib import OAuth1Session
 
 import browser
-import main
 from inspector import is_allowed
 
 
@@ -81,7 +79,7 @@ class Twitter:
             print("skipped error")
         return parse_response_to_list(to_return)
 
-    def post_tweet(self, tweet: str):
+    def post_tweet(self, tweet: str) -> bool:
         payload = {"text": tweet}
 
         # Get request token
@@ -137,6 +135,7 @@ class Twitter:
             print(
                 f"Request returned an error: {response.status_code} {response.text}.\tTrying again"
             )
-            main.generate_and_post_tweet(main.my_model, main.bot)  # Try again
+            return False
         else:
             print(f"successfully posted tweet: {tweet} to {os.environ['TWITTER_USERNAME']}")
+            return True

@@ -38,7 +38,8 @@ tweets
    # you should have been given this when you created 
    # your twitter developer account
    
-   # To add variables permanently, paste this into ~./bash_profile
+   # To add variables permanently, paste this into ~./bashrc or ~/.zshrc
+   #                               (using $ echo 'command' >> ~/.bashrc)
    # For Windows, replace export with setx
     ```
 
@@ -46,11 +47,6 @@ tweets
 
 ```zsh
 python main.py
-```
-This will run the default server configuration as a background process. To run in foreground, open `python` and run
-```pycon
-import main
-main.run_server()
 ```
 
 The default main.py has three scheduled processes

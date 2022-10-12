@@ -29,7 +29,9 @@ def query_and_train(model: NgramModel, client):
 
 
 def generate_and_post_tweet(model, api_client):
-    api_client.post_tweet(model.generate_tweet())
+    posted = False
+    while not posted:
+        posted = api_client.post_tweet(model.generate_tweet())
 
 
 def exit_gracefully(*args):
@@ -43,12 +45,15 @@ if __name__ == "__main__":
     schedule.every(1).hours.do(lambda: generate_and_post_tweet(my_model, bot))
     schedule.every(10).minutes.do(my_model.backup)
 
-    signal.signal(signal.SIGINT, exit_gracefully)
-    signal.signal(signal.SIGTERM, exit_gracefully)
+    for i in signal.valid_signals():
+        if (i == signal.SIGKILL or
+                i == signal.SIGSTOP):
+            continue
+        signal.signal(i, exit_gracefully)
 
-    exit_now = False
-    while not exit_now:
-        schedule.run_pending()
-        time.sleep(1)
-    my_model.backup()
-    print("Processes successfully stopped")
+exit_now = False
+while not exit_now:
+    schedule.run_pending()
+    time.sleep(1)
+my_model.backup()
+print("Processes successfully stopped")
