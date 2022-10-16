@@ -39,10 +39,14 @@ def query_and_train(client):
     gc.collect()
 
 
-def generate_and_post_tweet(model, api_client):
+def generate_and_post_tweet(api_client):
+    model = loader()
     posted = False
     while not posted:
         posted = api_client.post_tweet(model.generate_tweet())
+    model = None
+    del model
+    gc.collect()
 
 
 def exit_gracefully(*args):
@@ -54,7 +58,7 @@ def run_server():
     global exit_now
     # I scheduled the training sequence to run every 3 seconds and the tweet to run every 3 hours
     schedule.every().hours.do(lambda: query_and_train(bot))
-    # schedule.every(3).hours.do(lambda: generate_and_post_tweet(my_model, bot))
+    schedule.every(3).hours.do(lambda: generate_and_post_tweet(bot))
     # schedule.every(10).minutes.do(my_model.backup)
 
     signal.signal(signal.SIGINT, exit_gracefully)
