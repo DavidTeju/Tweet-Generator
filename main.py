@@ -51,9 +51,9 @@ if __name__ == "__main__":
             continue
         signal.signal(i, exit_gracefully)
 
-exit_now = False
-while not exit_now:
-    schedule.run_pending()
-    time.sleep(1)
-my_model.backup()
-print("Processes successfully stopped")
+    exit_now = False
+    while not exit_now:
+        schedule.run_pending()
+        time.sleep(1)
+    my_model.backup()
+    print("Processes successfully stopped")
