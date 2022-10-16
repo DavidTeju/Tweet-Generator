@@ -1,8 +1,8 @@
 # Tweet-Generator
 
-###### Built-in model trained on 50,061 tweets
+###### Built-in model trained on 50,061 tweets.
+###### See bot in action: https://twitter.com/RandTweeterbot
 
-<!-- TODO: add how to use -->
 A machine learning python program using a custom/bare-bone ngram model trained on tweets to generate new human-alike
 tweets
 
