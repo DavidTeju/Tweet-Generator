@@ -2,6 +2,7 @@ import signal
 import time
 
 import schedule as schedule
+from daemon import DaemonContext
 from random_word import RandomWords
 
 from NgramModel import NgramModel
@@ -39,11 +40,15 @@ def exit_gracefully(*args):
     exit_now = True
 
 
-if __name__ == "__main__":
+def run_server():
+    global exit_now
     # I scheduled the training sequence to run every 3 seconds and the tweet to run every 3 hours
     schedule.every(3).seconds.do(lambda: query_and_train(my_model, bot))
-    schedule.every(1).hours.do(lambda: generate_and_post_tweet(my_model, bot))
+    schedule.every(3).hours.do(lambda: generate_and_post_tweet(my_model, bot))
     schedule.every(10).minutes.do(my_model.backup)
+
+    signal.signal(signal.SIGINT, exit_gracefully)
+    signal.signal(signal.SIGTERM, exit_gracefully)
 
     for i in signal.valid_signals():
         if (i == signal.SIGKILL or
@@ -51,9 +56,16 @@ if __name__ == "__main__":
             continue
         signal.signal(i, exit_gracefully)
 
-exit_now = False
-while not exit_now:
-    schedule.run_pending()
-    time.sleep(1)
-my_model.backup()
-print("Processes successfully stopped")
+    while not exit_now:
+        schedule.run_pending()
+        time.sleep(1)
+    my_model.backup()
+    print("Processes successfully stopped")
+
+
+if __name__ == "__main__":
+    exit_now = False
+    """This is simply a way for me to make this a background process so it isn't closed on the server"""
+    with open("log", "w+") as file:
+        with DaemonContext(stderr=file, stdout=file):
+            run_server()
