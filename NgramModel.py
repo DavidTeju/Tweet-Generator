@@ -59,7 +59,7 @@ class NgramModel:
         self.context_options[ngram[0]].add(ngram[1])
 
     def backup(self):
-        os.makedirs("~/models", exist_ok=True)
+        os.makedirs("models", exist_ok=True)
         with open(self.pickle_path, "wb") as file:
             cloudpickle.dump(self, file)
 
