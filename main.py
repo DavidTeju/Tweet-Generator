@@ -1,12 +1,15 @@
 import signal
 import time
 
+import psutil
 import schedule as schedule
 from random_word import RandomWords
 
 from NgramModel import NgramModel
 from inspector import tweet_to_sentences
 from twitter import *
+
+process = psutil.Process(os.getpid())
 
 randomizer = RandomWords()
 bot = Twitter(os.environ["TWITTER_API_BEARER_TOKEN"],
@@ -23,15 +26,30 @@ def query_and_train(model: NgramModel, client):
     :param model: model to train
     :param client: Twitter object to handle twitter processes
     """
+    print("query: ", format_bytes(process.memory_info().rss))
+
     query = randomizer.get_random_word()
     for each_tweet in client.get_tweets(query):
         model.train(tweet_to_sentences(each_tweet))
 
 
 def generate_and_post_tweet(model, api_client):
+    print("post tweet: ", format_bytes(process.memory_info().rss))
+
     posted = False
     while not posted:
         posted = api_client.post_tweet(model.generate_tweet())
+
+
+def format_bytes(size):
+    # 2**10 = 1024
+    power = 2 ** 10
+    n = 0
+    power_labels = {0: '', 1: 'kilo', 2: 'mega', 3: 'giga', 4: 'tera'}
+    while size > power:
+        size /= power
+        n += 1
+    return size, power_labels[n] + 'bytes'
 
 
 def exit_gracefully(*args):
