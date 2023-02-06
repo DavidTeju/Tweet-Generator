@@ -80,6 +80,11 @@ class Twitter:
         return parse_response_to_list(to_return)
 
     def post_tweet(self, tweet: str) -> bool:
+        """
+        Posts a tweet
+        :param tweet: A string of text to post as a tweet
+        :return: a boolean indicating success of the tweet
+        """
         payload = {"text": tweet}
 
         # Get request token
