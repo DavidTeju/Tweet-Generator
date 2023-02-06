@@ -1,3 +1,5 @@
+import logging
+import shutil
 import signal
 import time
 
@@ -8,6 +10,10 @@ from NgramModel import NgramModel
 from inspector import tweet_to_sentences
 from twitter import *
 
+logging.basicConfig(filename="tweeter.log",
+                    format='%(levelname)s (%(asctime)s): %(message)s',
+                    level=logging.INFO,
+                    encoding="utf-8")
 randomizer = RandomWords()
 bot = Twitter(os.environ["TWITTER_API_BEARER_TOKEN"],
               os.environ["TWITTER_API_KEY"],
@@ -31,7 +37,12 @@ def query_and_train(model: NgramModel, client):
 def generate_and_post_tweet(model, api_client):
     posted = False
     while not posted:
-        posted = api_client.post_tweet(model.generate_tweet())
+        tweet = model.generate_tweet()
+        posted = api_client.post_tweet(tweet)
+        if posted:
+            logging.info(f"Tweet posted: '{tweet}'")
+        else:
+            logging.error(f"Failed to post tweet: {tweet}. Retrying")
 
 
 def exit_gracefully(*args):
@@ -39,21 +50,28 @@ def exit_gracefully(*args):
     exit_now = True
 
 
-if __name__ == "__main__":
-    # I scheduled the training sequence to run every 3 seconds and the tweet to run every 3 hours
-    schedule.every(3).seconds.do(lambda: query_and_train(my_model, bot))
-    schedule.every(1).hours.do(lambda: generate_and_post_tweet(my_model, bot))
-    schedule.every(10).minutes.do(my_model.backup)
+def log_and_backup():
+    shutil.copyfile("models/main-model.pickle", "backup/main-model.pickle")
+    my_model.backup()
+    logging.info("Model backed up")
 
+
+if __name__ == "__main__":
     for i in signal.valid_signals():
         if (i == signal.SIGKILL or
                 i == signal.SIGSTOP):
             continue
         signal.signal(i, exit_gracefully)
 
+    # I scheduled the training sequence to run every 3 seconds and the tweet to run every 3 hours
+    generate_and_post_tweet(my_model, bot)
+    schedule.every(4).seconds.do(lambda: query_and_train(my_model, bot))
+    schedule.every(1).hours.do(lambda: generate_and_post_tweet(my_model, bot))
+    schedule.every(10).minutes.do(log_and_backup)
+
     exit_now = False
     while not exit_now:
         schedule.run_pending()
         time.sleep(1)
     my_model.backup()
-    print("Processes successfully stopped")
+    logging.info("Process killed with successful backup")
