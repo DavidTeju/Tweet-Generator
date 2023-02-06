@@ -34,7 +34,6 @@ class NgramModel:
         self.num_tweets += 1
         for sentence in tweet_as_list:
             self.num_sentences += 1
-            # print("Sentence: ", sentence)
             generated = self.generate_Ngrams(sentence)
             for ngram in generated:
                 self.context_options[ngram[0]].update([ngram[1]])

@@ -39,10 +39,6 @@ def generate_and_post_tweet(model, api_client):
     while not posted:
         tweet = model.generate_tweet()
         posted = api_client.post_tweet(tweet)
-        if posted:
-            logging.info(f"Tweet posted: '{tweet}'")
-        else:
-            logging.error(f"Failed to post tweet: {tweet}. Retrying")
 
 
 def exit_gracefully(*args):

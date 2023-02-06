@@ -1,3 +1,4 @@
+import logging
 import os
 from dataclasses import dataclass
 
@@ -76,7 +77,7 @@ class Twitter:
         try:
             to_return = requests.get(Twitter.__search_url, search_param, auth=self.bearer_oauth).json()
         except Exception:
-            print("skipped error")
+            logging.warning("skipped error")
         return parse_response_to_list(to_return)
 
     def post_tweet(self, tweet: str) -> bool:
@@ -94,10 +95,8 @@ class Twitter:
         try:
             fetch_response = oauth.fetch_request_token(request_token_url)
         except ValueError:
-            print(
-                "There may have been an issue with the consumer_key or consumer_secret you entered."
-            )
-            return
+            logging.error("There may have been an issue with the consumer_key or consumer_secret you entered.")
+            return False
 
         resource_owner_key = fetch_response.get("oauth_token")
         resource_owner_secret = fetch_response.get("oauth_token_secret")
@@ -137,10 +136,8 @@ class Twitter:
         )
 
         if response.status_code != 201:
-            print(
-                f"Request returned an error: {response.status_code} {response.text}.\tTrying again"
-            )
+            logging.error(f"Request returned an error: {response.status_code} {response.text}.\tTrying again")
             return False
         else:
-            print(f"successfully posted tweet: {tweet} to {os.environ['TWITTER_USERNAME']}")
+            logging.info(f"successfully posted tweet: {tweet} to {os.environ['TWITTER_USERNAME']}")
             return True
