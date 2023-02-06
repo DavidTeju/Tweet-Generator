@@ -1,6 +1,7 @@
 # Tweet-Generator
 
 ###### Built-in model trained on 56,253 tweets.
+
 ###### See bot in action: https://twitter.com/RandTweeterbot
 
 A machine learning python program using a custom/bare-bone ngram model trained on tweets to generate new human-alike
@@ -15,19 +16,19 @@ tweets
 ## SetUp
 
 1. #### Clone the repo (and cd into folder):
-    ```zsh
+    ```bash
     git clone https://github.com/DavidTeju/Tweet-Generator
     cd Tweet-Generator
     ```
 2. #### Set up virtual environment and install package dependencies:
-    ```zsh
+    ```bash
     python3 -m venv venv
     source venv/bin/activate # for Linux/MacOs
    # just 'venv/bin/activate' for windows
     pip3 install -r requirements.txt
     ```
 3. #### Set environment variables
-    ```zsh
+    ```bash
    export TWITTER_USERNAME="REPLACE_WITH_YOUR_VALUES"
    export TWITTER_PASSWORD="REPLACE_WITH_YOUR_VALUES"
    # the username and password for the twitter account to post to
@@ -45,7 +46,7 @@ tweets
 
 ## Use it
 
-```zsh
+```bash
 python main.py
 ```
 
@@ -56,8 +57,27 @@ The default main.py has three scheduled processes
 - The second process will generate a random sentence and tweet it every 1 hour
 - The third process will update the `.pickle` file every 10 minutes (although you can initialize a model to auto-update)
 
+To run in background:
+
+```bash
+nohup python main.py & disown
+```
+
 To stop the processes safely, you may keyboard interrupt `^C` or kill the process `kill <pid>`  
-To find the `pid`, run `ps -xj | grep -v grep | grep -i "python main.py"` and it should be the number in the second column
+To find the `pid`, run
+
+```bash
+ps -ef | grep -v grep | grep -i "python main.py" | awk '{print $2}'
+```
+
+This may not work if you have some other program with similar process path running. Instead, you can run
+
+```bash
+ps -xj | grep -v grep | grep -i "python main.py"
+```
+
+and pick out which is the actual process to kill. The PID should
+be the number in the second column
 
 I encourage you to modify main.py in any way to change around the function using what's built in. I've extensively
 documented everything
@@ -86,7 +106,8 @@ word candidates given a context, is updated with new candidates.
 
 ## What is left to be done?
 
-The ultimate goal is to have the capability for people to connect the bot to their Twitter account and have it post for them. I will need to work on:
+The ultimate goal is to have the capability for people to connect the bot to their Twitter account and have it post for
+them. I will need to work on:
 
 1. a web page where people can sign in to twitter to delegate the bot
 2. An API that can scale and schedule tweets for hundreds of people
