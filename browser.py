@@ -30,5 +30,5 @@ def get_pin(url):
 
     time.sleep(5)
 
-    pin = driver.find_element(By.TAG_NAME, "code").get_attribute("innerHTML")
+    pin = driver.find_element(By.CSS_SELECTOR, "kbd > code").get_attribute("innerText")
     return pin
