@@ -1,6 +1,6 @@
 # Tweet-Generator
 
-###### Built-in model trained on 50,061 tweets.
+###### Built-in model trained on 56,253 tweets.
 ###### See bot in action: https://twitter.com/RandTweeterbot
 
 A machine learning python program using a custom/bare-bone ngram model trained on tweets to generate new human-alike
@@ -57,7 +57,7 @@ The default main.py has three scheduled processes
 - The third process will update the `.pickle` file every 10 minutes (although you can initialize a model to auto-update)
 
 To stop the processes safely, you may keyboard interrupt `^C` or kill the process `kill <pid>`  
-To find the `pid`, run `ps -xj | grep -v grep | grep "python main.py"` and it should be the number in the second column
+To find the `pid`, run `ps -xj | grep -v grep | grep -i "python main.py"` and it should be the number in the second column
 
 I encourage you to modify main.py in any way to change around the function using what's built in. I've extensively
 documented everything
