@@ -1,6 +1,6 @@
 # Tweet-Generator
 
-###### Built-in model trained on 56,253 tweets.
+###### Built-in model trained on 60,402 tweets.
 
 ###### See bot in action: https://twitter.com/RandTweeterbot
 
