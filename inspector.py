@@ -15,8 +15,8 @@ def is_allowed(string: str):
 
     # Get bad words
     bad_words = [regex.search(r"b'(.*?)\\n", str(line)).group(1) for line in
-                 w_open('https://raw.githubusercontent.com/jyunderwood/explicit_words/master/lib/explicit_words.txt')] \
-                + ["nsfw", "bdsm"]
+                 w_open('https://raw.githubusercontent.com/jyunderwood/explicit_words/master/lib/explicit_words.txt')
+                 ] + ["nsfw", "bdsm"]
     #   File was returning some weird chars so extract needed word from that with regex and convert to list
 
     if any(bad_word.lower() in string.lower() for bad_word in bad_words):

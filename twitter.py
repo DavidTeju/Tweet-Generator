@@ -74,6 +74,7 @@ class Twitter:
         """
         search_param["query"] = keyword
         to_return = dict()
+        # noinspection PyBroadException
         try:
             to_return = requests.get(Twitter.__search_url, search_param, auth=self.bearer_oauth).json()
         except Exception:
