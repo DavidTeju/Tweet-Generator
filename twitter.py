@@ -73,7 +73,7 @@ class Twitter:
         :return: a list of tweets returned as strings
         """
         search_param["query"] = keyword
-        to_return = dict()
+        to_return = {}
         # noinspection PyBroadException
         try:
             to_return = requests.get(Twitter.__search_url, search_param, auth=self.bearer_oauth).json()

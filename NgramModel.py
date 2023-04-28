@@ -21,9 +21,11 @@ class NgramModel:
         """
         self.n = n
         self.pickle_path = self.pathify(name or self.gen_pickle_name())
-        if path.exists(self.pickle_path):  # Ask if they intend to overwrite existing pickle
-            if input(f"overwrite {self.pickle_path}? (Y/N)\n").upper() != "Y":
-                self.pickle_path = self.pathify(self.gen_pickle_name())
+        if (
+            path.exists(self.pickle_path)
+            and input(f"overwrite {self.pickle_path}? (Y/N)\n").upper() != "Y"
+        ):
+            self.pickle_path = self.pathify(self.gen_pickle_name())
         self.context_options: dict[tuple, Counter[str]] = defaultdict(Counter)
         # dict [context, Counter of possible tokens]
         self.num_tweets = 0
@@ -44,12 +46,10 @@ class NgramModel:
         words = string.split(" ")
         words = [self.start] * (self.n - 1) + words + [self.end] * (self.n - 1)
 
-        list_of_tup = []
-
-        for i in range(len(words) + 1 - self.n):
-            list_of_tup.append((tuple(words[i + j] for j in range(self.n - 1)), words[i + self.n - 1]))
-
-        return list_of_tup
+        return [
+            (tuple(words[i + j] for j in range(self.n - 1)), words[i + self.n - 1])
+            for i in range(len(words) + 1 - self.n)
+        ]
 
     def backup(self):
         os.makedirs("models", exist_ok=True)
@@ -89,7 +89,7 @@ class NgramModel:
         # return self.ngram_count[(context, token)] / context_freq
 
     def calculate_freq(self, context: tuple):
-        freq = sum(freq for freq in self.context_options[context].values())
+        freq = sum(self.context_options[context].values())
         self.context_freq_cache[self, context] = freq
         return freq
 
