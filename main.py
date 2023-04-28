@@ -54,8 +54,7 @@ def log_and_backup():
 
 if __name__ == "__main__":
     for i in signal.valid_signals():
-        if (i == signal.SIGKILL or
-                i == signal.SIGSTOP):
+        if i in [signal.SIGKILL, signal.SIGSTOP]:
             continue
         signal.signal(i, exit_gracefully)
 
